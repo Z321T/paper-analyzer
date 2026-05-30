@@ -4,7 +4,7 @@
 
 - Output language: match the user's query language by default. If the paper is in English but user asks in Chinese, output Chinese. The user can explicitly request a specific output language.
 - Every mode output must start with the paper title, authors, affiliations, and a one-line TL;DR.
-- Use Mermaid code blocks for all diagrams (mindmaps and flowcharts). Place diagrams immediately after the relevant text section.
+- Use Mermaid code blocks for diagrams in Skim and Deep modes only. Place diagrams immediately after the relevant text section. Do NOT generate Mermaid diagrams in Comprehensive or Review modes.
 
 ---
 
@@ -40,9 +40,89 @@
 
 ---
 
-## Mode 2: Deep (精读)
+## Mode 2: Comprehensive (详解)
 
-**Trigger**: "精读" / "详细分析" / "deep read" / "组会" / "presentation" / "深入了解" / default (no mode specified)
+**Trigger**: "详解" / "comprehensive" / "逐段" / "全文讲解" / "按章节" / "通读"
+
+**Purpose**: A faithful, section-by-section walkthrough of the paper following the original structure. The reader should come away understanding *what the paper says* in each section, without analytical overlays.
+
+**Core principle**: Explain the paper as written — do not critique, evaluate, or reorganize. This is an expository document, not an analytical one.
+
+**Output structure**:
+
+```
+## [Paper Title]
+
+**作者**: [Authors], **单位**: [Affiliations]
+**发表**: [Venue, Year] | **代码**: [URL or "未开源"] | **项目页**: [URL]
+
+**一句话 TL;DR**: [One sentence summarizing the paper]
+
+---
+
+### 目录
+[Auto-generated table of contents matching the paper's actual section structure]
+
+---
+
+### 1. [Section Name — matching the paper's section title exactly]
+
+[For each section and subsection, provide:]
+
+#### 1.1 [Subsection Name]
+
+**原文要点**:
+- Key arguments, claims, and findings as stated by the authors
+- Important formulas preserved verbatim with brief explanations of each variable
+- Descriptions of key figures and tables: what they show, what patterns matter
+
+**归纳** (brief, at end of major sections only):
+- How this section connects to the paper's overall argument
+- Forward references to later sections if the paper makes them
+
+[Repeat this pattern for every section of the paper, following the paper's own numbering.]
+
+---
+
+### N. 附录要点 (Appendix Highlights)
+
+[If the paper has an appendix, cover:]
+- Hyperparameter values not stated in the main text
+- Additional ablation studies or experiments
+- Prompt templates or data processing details
+- Any other supplementary information critical for understanding or reproduction
+
+---
+
+### 组会汇报建议 (Presentation Tips, optional)
+
+[If the user is preparing a presentation:]
+- **推荐叙事线索**: Suggested narrative arc
+- **时间分配建议**: Time allocation for each section
+- **重点突出的"卖点"**: Key selling points to emphasize
+- **可能被问到的问题**: Anticipated Q&A with suggested responses
+```
+
+**Key rules for Comprehensive mode**:
+
+| Rule | Rationale |
+|:-----|:----------|
+| Follow the paper's own section order and numbering | The reader uses this as a reading companion alongside the original paper |
+| Explain faithfully — no critique, no evaluation | Analysis belongs to Deep mode; this mode serves a different reader need |
+| Do NOT generate new Mermaid diagrams | The paper has its own figures; describe them, don't replace them |
+| Do NOT include reproducibility assessment | This is an expository document, not an evaluation |
+| Do NOT include innovation contribution rating tables | Analytical content belongs to Deep mode |
+| Do NOT include claim-evidence mapping | Critical content belongs to Review mode |
+| Cover appendix content explicitly | Many readers skip the appendix; this mode brings key details forward |
+| Use "原文要点" labels for faithful explanation, "归纳" for brief synthesis | Clear labeling prevents the reader from confusing author claims with your synthesis |
+
+---
+
+## Mode 3: Deep (精读)
+
+**Trigger**: "精读" / "deep" / "深入" / "组会" / "presentation" / default (no mode specified)
+
+Note: "详细" alone is ambiguous — default to Deep and mention Comprehensive mode is also available.
 
 **Output structure** (full analysis):
 
@@ -149,7 +229,7 @@ For each innovation, explain **why it matters** and **what would break without i
 
 ---
 
-## Mode 3: Review (审稿)
+## Mode 4: Review (审稿)
 
 **Trigger**: "审稿" / "review" / "批判性" / "找问题" / "peer review"
 
@@ -222,6 +302,47 @@ For each major claim in the paper, check if it's adequately supported:
 
 - [Any other observations for the authors/area chair]
 ```
+
+---
+
+## Mode 5: Full (全面分析)
+
+**Trigger**: "全面" / "full" / "全面分析" / "full analysis"
+
+**Purpose**: A combination mode that provides both the faithful walkthrough AND the analytical deep-read. This is for readers who want the complete picture — first understand what the paper says, then understand what it means.
+
+**Behavior**: Produce TWO independent outputs in strict sequence:
+
+1. **First output: Comprehensive mode (详解)** — the full section-by-section faithful walkthrough, following the paper's own structure. Complete with appendix coverage and optional presentation tips.
+
+2. **Second output: Deep mode (精读)** — the full analytical reading with mind maps, flowcharts, comparison tables, innovation ratings, and reproducibility assessment.
+
+**Format**:
+
+```
+---
+## 第一部分：论文详解
+---
+
+[Complete Comprehensive mode output as specified in Mode 2]
+
+---
+## 第二部分：论文精读分析
+---
+
+[Complete Deep mode output as specified in Mode 3]
+```
+
+**Key rules for Full mode**:
+
+| Rule | Rationale |
+|:-----|:----------|
+| Comprehensive always comes first, Deep second | The reader needs to know what the paper says before understanding what it means |
+| Both outputs must be complete and self-contained | Each can be read independently; cross-reference only by section name |
+| Use a clear visual divider between the two | `---` separators and section headers make the boundary unambiguous |
+| Do NOT merge or interleave the two modes | Mixing expository and analytical content defeats the purpose of differentiation |
+| Each output follows its own complete template | The Comprehensive section uses the Mode 2 spec; the Deep section uses the Mode 3 spec |
+| The follow-up prompt should offer to expand either part | "需要对详解或精读部分的任何内容做进一步展开吗？" |
 
 ---
 
