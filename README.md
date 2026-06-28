@@ -1,4 +1,4 @@
-# paper-analyzer 论文分析技能
+# paper-analyzer 论文分析技能--v1.3.0
 
 ## 文件结构
 
